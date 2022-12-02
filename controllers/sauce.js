@@ -14,7 +14,7 @@ exports.createSauce = (req, res, next) => { // Middleware to create a new sauce
 			req.file.filename
 		}`,
         likes: 0,
-        dislike: 1
+        dislike: 0
     });
     sauce.save() // we register the sauce in the data base
     .then(()=>res.status(201).json({message : "Nouvelle sauce générée !"})) // the ressource has been created and we send the info to the frontend
