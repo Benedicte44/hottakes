@@ -12,7 +12,7 @@ const sauceSchema = mongoose.Schema({ // we create our sauce schema
     heat: {type: Number, required: true}, // the sauce's score
     likes: {type: Number}, // number of people who like the sauce
     dislikes: {type: Number}, // number of people who dislike the sauce
-    usersLiked:{type: Array}, // id of people who liked the sauce
+    usersLiked: {type: Array}, // id of people who liked the sauce
     usersDisliked: {type: Array} // id of people who disliked the sauce
 });
 

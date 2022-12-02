@@ -45,7 +45,7 @@ exports.login = (req, res, next) => {
 								userId: user._id,
 								token: jwt.sign( // with this function of the jsonwebtoken package the user receive a token that will expire in 24 hours
                                     {userId: user._id},
-                                    'RANDOM-TOKEN_SECRET',
+                                    'RANDOM_TOKEN_SECRET',
                                     {expiresIn: '1h'}
                                 ),
 							});
