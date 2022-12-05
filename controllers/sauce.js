@@ -13,10 +13,6 @@ exports.createSauce = (req, res, next) => { // Middleware to create a new sauce
         imageUrl: `${req.protocol}://${req.get("host")}/images/${ // we define the image url
 			req.file.filename
 		}`,
-        likes: 0,
-        dislike: 0,
-		usersLiked: [],
-		usersDisliked: [],
     });
     sauce.save() // we register the sauce in the data base
     .then(()=>res.status(201).json({message : "Nouvelle sauce générée !"})) // the ressource has been created and we send the info to the frontend

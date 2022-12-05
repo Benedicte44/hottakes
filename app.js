@@ -1,13 +1,16 @@
 const express = require('express'); // we import express module
 const mongoose = require('mongoose'); // we import mongoose
+const dotenv = require('dotenv'); // to import our environnement variables
 const app = express(); // we tell that the app will run with express
-const path = require('path');
+const path = require('path'); // to have access to the file architecture
 const userRoutes = require('./routes/user'); // we import the user router
 const sauceRoutes = require('./routes/sauce'); // we import the sauce router
 
+dotenv.config();
+
 mongoose // we connect our API to the data base mongoDB
 	.connect(
-		"mongodb+srv://Benedicte:Sasha15022020@cluster0.i0xseoy.mongodb.net/?retryWrites=true&w=majority",
+		process.env.MDBBC,
 		{ useNewUrlParser: true, useUnifiedTopology: true }
 	)
 	.then(() => console.log("Connexion à MongoDB réussie !"))
