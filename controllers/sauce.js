@@ -77,6 +77,7 @@ exports.modifySauce = (req, res, next) => { // function to modify the datas of a
     .then((sauce) => {
         if (req.body.like == 1){
             Sauce.updateOne(
+                {_id: req.params.id}, 
             {$push: {usersLiked: req.auth.userId},
             $inc: {likes: +1}}
             )
