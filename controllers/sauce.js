@@ -14,6 +14,7 @@ exports.createSauce = (req, res, next) => { // Middleware to create a new sauce
 			req.file.filename
 		}`,
     });
+
     sauce.save() // we register the sauce in the data base
     .then(()=>res.status(201).json({message : "Nouvelle sauce générée !"})) // the ressource has been created and we send the info to the frontend
     .catch((error)=>res.status(400).json({error}));
@@ -41,7 +42,7 @@ exports.modifySauce = (req, res, next) => { // function to modify the datas of a
 	Sauce.findOne({_id: req.params.id})
 		.then((sauce) => {
 			if (sauce.userId != req.auth.userId) { // if the user is not authorized we send an error message
-				res.status(401).json({ message : "Vous n'êtes pas autorisé(e) à modifier cette référence"});
+				res.status(403).json({ message : "Vous n'êtes pas autorisé(e) à modifier cette référence"});
 			} else {
 				Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id}) // if the user is authorized we modify the sauce datas
 				.then(() => res.status(200).json({message : 'Sauce modifiée!'}))
@@ -57,7 +58,7 @@ exports.modifySauce = (req, res, next) => { // function to modify the datas of a
 	Sauce.findOne({ _id: req.params.id})
 		.then((sauce) => {
 			if (sauce.userId != req.auth.userId) {
-				res.status(401).json({message: "Vous n'êtes pas autorisé(e) à modifier cette référence"});
+				res.status(403).json({message: "Vous n'êtes pas autorisé(e) à modifier cette référence"});
 			} else {
 				const filename = sauce.imageUrl.split('/images/')[1];
 				fs.unlink(`images/${filename}`, () => {
@@ -75,7 +76,7 @@ exports.modifySauce = (req, res, next) => { // function to modify the datas of a
  exports.likeDislikeSauce = (req, res, next) => {
     Sauce.findOne({_id: req.params.id})
     .then((sauce) => {
-        if (req.body.like == 1){
+        if (req.body.like == 1 && sauce.usersLiked.includes(req.auth.userId) == false && sauce.usersDisliked.includes(req.auth.userId) == false){
             Sauce.updateOne(
                 {_id: req.params.id}, 
             {$push: {usersLiked: req.auth.userId},
@@ -100,7 +101,7 @@ exports.modifySauce = (req, res, next) => { // function to modify the datas of a
                 .then(() => res.status(200).json({message: "Votre changement d'avis pour cette sauce est enregistré !"}))
                 .catch(error => res.status(400).json({error}));
             } else {
-                if (req.body.like == -1) {
+                if (req.body.like == -1 && sauce.usersDisliked.includes(req.auth.userId) == false && sauce.usersLiked.includes(req.auth.userId) == false) {
                     Sauce.updateOne(
                         {_id: req.params.id}, 
                         {$push: {usersDisliked: req.auth.userId},
@@ -108,6 +109,8 @@ exports.modifySauce = (req, res, next) => { // function to modify the datas of a
                     )
                     .then(() => res.status(200).json({message: 'Votre non appétence pour cette sauce est enregistrée !'}))
                     .catch(error => res.status(400).json({error}));  
+                } else {
+                    res.status(400).json({message: 'Vous avez déjà revendiqué votre avis !'})
                 }
             }
             
