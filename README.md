@@ -1,6 +1,6 @@
 # HOTTAKES API
 
-HOTAKES is an app opened to identified users. Once connected, they can download there favorite sauce (with its image, name, description...), modify and delete it. 
+HOTTAKES is an app opened to identified users. Once connected, they can download there favorite sauce (with its image, name, description...), modify and delete it. 
 Visitors can run, like or dislike the sauces edited on the app.
 Here are the backend files to make the API works.
 
