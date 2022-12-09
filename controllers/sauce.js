@@ -14,20 +14,20 @@ exports.createSauce = (req, res, next) => { // Middleware to create a new sauce
 			req.file.filename
 		}`,
     });
-
+    
     sauce.save() // we register the sauce in the data base
     .then(()=>res.status(201).json({message : "Nouvelle sauce générée !"})) // the ressource has been created and we send the info to the frontend
     .catch((error)=>res.status(400).json({error}));
 };
 
 exports.getAllSauces = (req, res, next) => { // the function to get all sauces
-	Sauce.find()
+	Sauce.find() // to have an array with our sauces
 		.then((sauces) => res.status(200).json(sauces))
 		.catch((error) => res.status(400).json({ error }));
 };
 
 exports.getOneSauce = (req, res, next) => { // the function to get one sauce
-	Sauce.findOne({ _id: req.params.id })
+	Sauce.findOne({ _id: req.params.id }) // we collect the sauce in our database with the id specified
 		.then((sauce) => res.status(200).json(sauce))
 		.catch((error) => res.status(404).json({ error }));
 };
@@ -37,14 +37,13 @@ exports.modifySauce = (req, res, next) => { // function to modify the datas of a
 		...JSON.parse(req.body.sauce),
 		imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
 	} : { ...req.body };
-  
 	delete sauceObject._userId;
 	Sauce.findOne({_id: req.params.id})
 		.then((sauce) => {
 			if (sauce.userId != req.auth.userId) { // if the user is not authorized we send an error message
 				res.status(403).json({ message : "Vous n'êtes pas autorisé(e) à modifier cette référence"});
 			} else {
-				Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id}) // if the user is authorized we modify the sauce datas
+				Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id, userId: req.auth.userId}) // if the user is authorized we modify the sauce datas
 				.then(() => res.status(200).json({message : 'Sauce modifiée!'}))
 				.catch(error => res.status(401).json({ error }));
 			}

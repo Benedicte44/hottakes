@@ -42,8 +42,8 @@ exports.login = (req, res, next) => {
 								.json({ message: "Paire identifiant/mot de passe incorrecte" });
 						} else { // if the password is true we send the datas that will be used for the authentification
 							res.status(200).json({
-								userId: user._id,
-								token: jwt.sign( // with this function of the jsonwebtoken package the user receive a token that will expire in 24 hours
+								userId: user._id, // we get the user ID sent by the database
+								token: jwt.sign( // with this function of the jsonwebtoken package the user receive a token that will expire in 1 hours
                                     {userId: user._id},
                                     process.env.KEY_TOKEN,
                                     {expiresIn: '1h'}
