@@ -20,7 +20,7 @@ You have to install :
 You have to config a database for example in mongoDB Atlas.
 
 For security reasons, the backend runs with environnement variables.
-You have to create a ".env" file in the backend folder, giving content to these following variables :
+You have to create a ".env" file in the backend folder (you can use the ".env.template" file as model), giving content to these following variables :
 - PORT = (here you indicate the port on which the backend will run ie : 3000)
 - MDBBC = (here is the connecting string you find on the mongoDB cluster you have created to stock the app datas)
 - KEY_TOKEN = (here you indicate the secret key for your token)
