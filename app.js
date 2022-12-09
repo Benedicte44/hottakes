@@ -5,7 +5,6 @@ const app = express(); // we tell that the app will run with express
 const path = require('path'); // to have access to the file architecture
 const userRoutes = require('./routes/user'); // we import the user router
 const sauceRoutes = require('./routes/sauce'); // we import the sauce router
-
 dotenv.config();
 
 mongoose // we connect our API to the data base mongoDB
