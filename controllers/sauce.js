@@ -21,6 +21,9 @@ exports.createSauce = (req, res, next) => {
 			req.file.filename
 		}`,
 	});
+	sauce.save() // we register the sauce in the data base
+	.then(()=>res.status(201).json({message : "Nouvelle sauce générée !"})) // the ressource has been created and we send the info to the frontend
+	.catch((error)=>res.status(400).json({error}));
 };
 
 exports.getAllSauces = (req, res, next) => {
