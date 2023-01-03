@@ -1,3 +1,5 @@
+// We define here our server's params
+
 const http = require('http');
 const app = require('./app');
 

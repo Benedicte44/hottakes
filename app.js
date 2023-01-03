@@ -1,3 +1,5 @@
+// We define here our app params
+
 const express = require('express'); // we import express module
 const mongoose = require('mongoose'); // we import mongoose
 const dotenv = require('dotenv'); // to import our environnement variables
@@ -5,7 +7,7 @@ const app = express(); // we tell that the app will run with express
 const path = require('path'); // to have access to the file architecture
 const userRoutes = require('./routes/user'); // we import the user router
 const sauceRoutes = require('./routes/sauce'); // we import the sauce router
-dotenv.config();
+dotenv.config(); // to be able to use our environment variables
 
 mongoose // we connect our API to the data base mongoDB
 	.connect(
@@ -30,8 +32,8 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use('/api/auth', userRoutes); // the user authentification datas
-app.use('/api/sauces', sauceRoutes); // the sauces datas
+app.use('/images', express.static(path.join(__dirname, 'images'))); // the route for the images storage
+app.use('/api/auth', userRoutes); // the route for the user authentification datas
+app.use('/api/sauces', sauceRoutes); // the route for the sauces datas
 
 module.exports = app;
