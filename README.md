@@ -16,6 +16,10 @@ You have to install :
 - mongoose-unique-validator ('npm install' on your backend terminal)
 - jsonwebtoken ('npm install' on your backend terminal)
 - multer ('npm install' on your backend terminal)
+- helmet ('npm install' on your backend terminal)
+- email validator ('npm install' on your backend terminal)
+- express-rate-validator ('npm install' on your backend terminal)
+- password-validator ('npm install' on your backend terminal)
 
 You have to config a database for example in mongoDB Atlas.
 
