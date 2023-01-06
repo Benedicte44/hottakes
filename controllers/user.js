@@ -2,7 +2,7 @@
 
 const bcrypt = require("bcrypt"); // we import this package to allow data encryption
 const User = require("../models/user"); // the user mongooe model is imported for its datas to be used in this file
-const jwt = require('jsonwebtoken'); // we import this package to allow the user to remain connected during a defined time
+const jwt = require("jsonwebtoken"); // we import this package to allow the user to remain connected during a defined time
 
 exports.signup = (req, res, next) => {
 	// the middleware to create new users
@@ -36,18 +36,21 @@ exports.login = (req, res, next) => {
 				bcrypt
 					.compare(req.body.password, user.password) // we use this method to compare if the password of the body request fits with the user hashed password in our data base
 					.then((valid) => {
-						if (!valid) { // if the password is false
+						if (!valid) {
+							// if the password is false
 							return res
 								.status(401)
 								.json({ message: "Paire identifiant/mot de passe incorrecte" });
-						} else { // if the password is true we send the datas that will be used for the authentification
+						} else {
+							// if the password is true we send the datas that will be used for the authentification
 							res.status(200).json({
 								userId: user._id, // we get the user ID sent by the database
-								token: jwt.sign( // with this function of the jsonwebtoken package the user receive a token that will expire in 1 hours
-                                    {userId: user._id},
-                                    process.env.KEY_TOKEN,
-                                    {expiresIn: '1h'}
-                                ),
+								token: jwt.sign(
+									// with this function of the jsonwebtoken package the user receive a token that will expire in 1 hours
+									{ userId: user._id },
+									process.env.KEY_TOKEN,
+									{ expiresIn: "1h" }
+								),
 							});
 						}
 					})
@@ -56,4 +59,3 @@ exports.login = (req, res, next) => {
 		})
 		.catch((error) => res.status(500).json({ error }));
 };
-

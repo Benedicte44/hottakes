@@ -10,20 +10,21 @@ exports.createSauce = (req, res, next) => {
 	delete sauceObject._userId;
 	const sauce = new Sauce({
 		// we create the new sauce thanks to our sauce model and the datas of the body request
-        name: sauceObject.name.toUpperCase(),
-        manufacturer: sauceObject.manufacturer.toUpperCase(),
-        description: sauceObject.description,
-        mainPepper: sauceObject.mainPepper,
-        heat: sauceObject.heat,
+		name: sauceObject.name.toUpperCase(),
+		manufacturer: sauceObject.manufacturer.toUpperCase(),
+		description: sauceObject.description,
+		mainPepper: sauceObject.mainPepper,
+		heat: sauceObject.heat,
 		userId: req.auth.userId,
 		imageUrl: `${req.protocol}://${req.get("host")}/images/${
 			// we define the image url
 			req.file.filename
 		}`,
 	});
-	sauce.save() // we register the sauce in the data base
-	.then(()=>res.status(201).json({message : "Nouvelle sauce générée !"})) // the ressource has been created and we send the info to the frontend
-	.catch((error)=>res.status(400).json({error}));
+	sauce
+		.save() // we register the sauce in the data base
+		.then(() => res.status(201).json({ message: "Nouvelle sauce générée !" })) // the ressource has been created and we send the info to the frontend
+		.catch((error) => res.status(400).json({ error }));
 };
 
 exports.getAllSauces = (req, res, next) => {
@@ -55,18 +56,45 @@ exports.modifySauce = (req, res, next) => {
 		.then((sauce) => {
 			if (sauce.userId != req.auth.userId) {
 				// if the user is not authorized we send an error message
-				res
-					.status(403)
-					.json({
-						message: "Vous n'êtes pas autorisé(e) à modifier cette référence",
-					});
-			} else {
+				res.status(403).json({
+					message: "Vous n'êtes pas autorisé(e) à modifier cette référence",
+				});
+			} else if (sauceObject.imageUrl == null) {
+				// if the user is authorized but do not change the sauce image
 				Sauce.updateOne(
 					{ _id: req.params.id },
-					{name: sauceObject.name.toUpperCase(), manufacturer: sauceObject.manufacturer.toUpperCase(),description: sauceObject.description,mainPepper: sauceObject.mainPepper,heat: sauceObject.heat, _id: req.params.id, userId: req.auth.userId }
-				) // if the user is authorized we modify the sauce datas
+					{
+						name: sauceObject.name.toUpperCase(),
+						manufacturer: sauceObject.manufacturer.toUpperCase(),
+						description: sauceObject.description,
+						mainPepper: sauceObject.mainPepper,
+						heat: sauceObject.heat,
+						_id: req.params.id,
+						userId: req.auth.userId,
+					}
+				)
 					.then(() => res.status(200).json({ message: "Sauce modifiée!" }))
 					.catch((error) => res.status(401).json({ error }));
+			} else {
+				// if the user is authorized and change the sauce image
+				const filename = sauce.imageUrl.split("/images/")[1];
+				fs.unlink(`images/${filename}`, () => {
+					Sauce.updateOne(
+						{ _id: req.params.id },
+						{
+							name: sauceObject.name.toUpperCase(),
+							manufacturer: sauceObject.manufacturer.toUpperCase(),
+							description: sauceObject.description,
+							mainPepper: sauceObject.mainPepper,
+							heat: sauceObject.heat,
+							_id: req.params.id,
+							imageUrl: sauceObject.imageUrl,
+							userId: req.auth.userId,
+						}
+					)
+						.then(() => res.status(200).json({ message: "Sauce modifiée!" }))
+						.catch((error) => res.status(401).json({ error }));
+				});
 			}
 		})
 		.catch((error) => {
@@ -79,11 +107,9 @@ exports.deleteSauce = (req, res, next) => {
 	Sauce.findOne({ _id: req.params.id })
 		.then((sauce) => {
 			if (sauce.userId != req.auth.userId) {
-				res
-					.status(403)
-					.json({
-						message: "Vous n'êtes pas autorisé(e) à modifier cette référence",
-					});
+				res.status(403).json({
+					message: "Vous n'êtes pas autorisé(e) à modifier cette référence",
+				});
 			} else {
 				const filename = sauce.imageUrl.split("/images/")[1];
 				fs.unlink(`images/${filename}`, () => {
@@ -113,11 +139,9 @@ exports.likeDislikeSauce = (req, res, next) => {
 					{ $push: { usersLiked: req.auth.userId }, $inc: { likes: +1 } }
 				)
 					.then(() =>
-						res
-							.status(200)
-							.json({
-								message: "Votre amour pour cette sauce est enregistré !",
-							})
+						res.status(200).json({
+							message: "Votre amour pour cette sauce est enregistré !",
+						})
 					)
 					.catch((error) => res.status(400).json({ error }));
 			} else if (
@@ -129,12 +153,10 @@ exports.likeDislikeSauce = (req, res, next) => {
 					{ $pull: { usersLiked: req.auth.userId }, $inc: { likes: -1 } }
 				)
 					.then(() =>
-						res
-							.status(200)
-							.json({
-								message:
-									"Votre souhait de ne plus soutenir cette sauce est pris en compte !",
-							})
+						res.status(200).json({
+							message:
+								"Votre souhait de ne plus soutenir cette sauce est pris en compte !",
+						})
 					)
 					.catch((error) => res.status(400).json({ error }));
 			} else if (
@@ -146,12 +168,10 @@ exports.likeDislikeSauce = (req, res, next) => {
 					{ $pull: { usersDisliked: req.auth.userId }, $inc: { dislikes: -1 } }
 				)
 					.then(() =>
-						res
-							.status(200)
-							.json({
-								message:
-									"Votre changement d'avis pour cette sauce est enregistré !",
-							})
+						res.status(200).json({
+							message:
+								"Votre changement d'avis pour cette sauce est enregistré !",
+						})
 					)
 					.catch((error) => res.status(400).json({ error }));
 			} else {
@@ -168,12 +188,10 @@ exports.likeDislikeSauce = (req, res, next) => {
 						}
 					)
 						.then(() =>
-							res
-								.status(200)
-								.json({
-									message:
-										"Votre non appétence pour cette sauce est enregistrée !",
-								})
+							res.status(200).json({
+								message:
+									"Votre non appétence pour cette sauce est enregistrée !",
+							})
 						)
 						.catch((error) => res.status(400).json({ error }));
 				} else {
